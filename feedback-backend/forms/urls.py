@@ -12,11 +12,11 @@ from .views import (
 urlpatterns = [
     # Public endpoints
     path('register/', UserCreateView.as_view(), name='register'),
-    path('forms/<int:pk>/', PublicFormDetailView.as_view(), name='public-form-detail'),
+    path('forms/<uuid:pk>/', PublicFormDetailView.as_view(), name='public-form-detail'),
     path('submit/', ResponseSubmitView.as_view(), name='response-submit'),
 
     # Secure Admin endpoints
     path('forms/create/', FormCreateView.as_view(), name='form-create'),
     path('admin/my-forms/', AdminFormListView.as_view(), name='my-forms-list'),
-    path('admin/forms/<int:pk>/responses/', FormResponseDetailView.as_view(), name='form-responses-detail'),
+    path('admin/forms/<uuid:pk>/responses/', FormResponseDetailView.as_view(), name='form-responses-detail'),
 ]

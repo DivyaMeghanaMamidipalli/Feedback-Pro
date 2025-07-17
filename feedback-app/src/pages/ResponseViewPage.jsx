@@ -43,8 +43,8 @@ export default function ResponseViewPage() {
       <h2 className="text-2xl font-semibold mt-8 mb-4 border-t pt-4">Responses ({responses.length})</h2>
       
       {responses.length > 0 ? (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border">
+        <div className="overflow-x-auto border border-gray-200 rounded-lg">
+          <table className="min-w-full bg-white">
             <thead className="bg-gray-200">
               <tr>
                 <th className="py-2 px-4 border text-left text-sm font-semibold text-gray-700">Submitted At</th>

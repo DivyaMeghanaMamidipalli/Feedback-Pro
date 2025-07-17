@@ -59,21 +59,48 @@ export default function PublicFormPage() {
         <div className="max-w-2xl mx-auto my-10 p-8 bg-white rounded-lg shadow-xl">
             <h1 className="text-3xl font-bold text-gray-800 mb-6 border-b pb-4">{form.title}</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
-                {form.questions.map(q => (
+                {form.questions.map(q => {
+                    // Determine which input component to render
+                    let inputComponent;
+                    if (q.question_type === 'TEXTAREA') {
+                    inputComponent = (
+                        <textarea
+                        onChange={(e) => handleInputChange(String(q.id), e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 min-h-[120px]"
+                        required
+                        />
+                    );
+                    } else if (q.question_type === 'NUMBER') {
+                    inputComponent = (
+                        <input
+                        type="number"
+                        onChange={(e) => handleInputChange(String(q.id), e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        required
+                        />
+                    );
+                    } else { // Default to 'TEXT'
+                    inputComponent = (
+                        <input
+                        type="text"
+                        onChange={(e) => handleInputChange(String(q.id), e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        required
+                        />
+                    );
+                    }
+
+                    return (
                     <div key={q.id}>
                         <label className="block text-lg font-medium text-gray-700 mb-2">{q.text}</label>
-                        <input
-                            type="text"
-                            onChange={(e) => handleInputChange(String(q.id), e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                            required
-                        />
+                        {inputComponent}
                     </div>
-                ))}
+                    );
+                })}
                 <button type="submit" className="w-full p-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition-colors">
                     Submit Feedback
                 </button>
-            </form>
+                </form>
         </div>
     );
 }
