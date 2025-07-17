@@ -1,17 +1,36 @@
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
-// Create a new Axios instance with a base URL
 const apiClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api', // Your Django API base URL
+  baseURL: 'http://127.0.0.1:8000/api', 
 });
 
-// Use an interceptor to add the auth token to every request
 apiClient.interceptors.request.use(
-  (config) => {
-    // Get the token from localStorage
-    const accessToken = localStorage.getItem('accessToken');
+  async (config) => {
+    let accessToken = localStorage.getItem('accessToken');
+
     if (accessToken) {
-      // If the token exists, add it to the Authorization header
+      const user = jwtDecode(accessToken);
+      const isExpired = Date.now() >= user.exp * 1000;
+
+      if (isExpired) {
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          const response = await axios.post('http://127.0.0.1:8000/api/token/refresh/', {
+            refresh: refreshToken,
+          });
+          
+          accessToken = response.data.access;
+          localStorage.setItem('accessToken', accessToken);
+        } catch (refreshError) {
+          console.error("Session expired. Please log in again.", refreshError);
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          window.location.href = '/admin/login'; 
+          return Promise.reject(refreshError);
+        }
+      }
+      
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
     return config;
@@ -20,5 +39,6 @@ apiClient.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
 
 export default apiClient;

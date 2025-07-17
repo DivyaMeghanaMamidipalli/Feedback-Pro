@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Use the generic axios for the login request
+import { useNavigate, Link } from 'react-router-dom'; // Import Link
+import axios from 'axios';
 
 export default function AdminLoginPage() {
   const [username, setUsername] = useState('');
@@ -10,18 +10,15 @@ export default function AdminLoginPage() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    setError(''); // Clear previous errors
+    setError('');
 
-    // The token endpoint is not under /api/ in our Django setup
     axios.post('http://127.0.0.1:8000/api/token/', {
       username,
       password,
     })
     .then(res => {
-      // Store tokens in localStorage
       localStorage.setItem('accessToken', res.data.access);
       localStorage.setItem('refreshToken', res.data.refresh);
-      // Redirect to the admin dashboard
       navigate('/admin/dashboard');
     })
     .catch(err => {
@@ -63,6 +60,12 @@ export default function AdminLoginPage() {
             Log In
           </button>
         </form>
+        <p className="text-sm text-center text-gray-600">
+          Don't have an account?{' '}
+          <Link to="/admin/register" className="font-medium text-blue-600 hover:underline">
+            Sign Up
+          </Link>
+        </p>
       </div>
     </div>
   );

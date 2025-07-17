@@ -1,29 +1,73 @@
 // src/pages/AdminDashboard.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import apiClient from '../api/axiosConfig';
 
 export default function AdminDashboard() {
-  // You can add logic here to check if the admin is logged in (using the JWT token)
-  // If not, redirect them to the login page.
+  const [forms, setForms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      navigate('/admin/login');
+      return;
+    }
+
+    // Fetch the list of forms owned by this admin
+    apiClient.get('/admin/my-forms/')
+      .then(res => {
+        setForms(res.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to fetch forms:", err);
+        // Could be an expired token
+        if (err.response && err.response.status === 401) {
+             navigate('/admin/login');
+        }
+        setLoading(false);
+      });
+  }, [navigate]);
+  
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    navigate('/admin/login');
+  };
+
+  if (loading) {
+    return <div className="text-center p-10">Loading Dashboard...</div>;
+  }
 
   return (
-    <div className="max-w-4xl mx-auto my-10 p-8 text-center">
-      <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
-      <p className="text-gray-600 mb-8">
-        Create new forms here or view all form responses in the main Django Admin Panel.
-      </p>
-      <div className="space-x-4">
-         <a href="/admin/create" className="inline-block px-6 py-3 bg-green-600 text-white font-bold rounded-md hover:bg-green-700 transition">
-          Create New Form
-        </a>
-        {/* THIS IS THE KEY LINK! */}
-        <a
-          href="http://127.0.0.1:8000/admin/"
-          target="_blank" // Opens in a new tab
-          rel="noopener noreferrer"
-          className="inline-block px-6 py-3 bg-indigo-600 text-white font-bold rounded-md hover:bg-indigo-700 transition"
-        >
-          View Responses (Django Admin)
-        </a>
+    <div className="max-w-4xl mx-auto my-10 p-8 bg-white rounded-lg shadow-xl">
+      <div className="flex justify-between items-center mb-6 border-b pb-4">
+        <h1 className="text-3xl font-bold">My Forms</h1>
+        <div>
+          <Link to="/admin/create" className="px-4 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 mr-2">
+            + New Form
+          </Link>
+          <button onClick={handleLogout} className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700">
+            Logout
+          </button>
+        </div>
+      </div>
+      
+      <div className="space-y-4">
+        {forms.length > 0 ? (
+          forms.map(form => (
+            <div key={form.id} className="p-4 border rounded-md shadow-sm hover:shadow-md transition-shadow">
+              <Link to={`/admin/forms/responses/${form.id}`} className="block">
+                <h2 className="text-xl font-semibold text-blue-700 hover:underline">{form.title}</h2>
+                <p className="text-sm text-gray-500">Created on: {new Date(form.created_at).toLocaleDateString()}</p>
+              </Link>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500 py-8">You haven't created any forms yet.</p>
+        )}
       </div>
     </div>
   );
