@@ -44,7 +44,7 @@ export default function PublicFormPage() {
 
     if (submitted) {
         return (
-            <div className="max-w-md mx-auto mt-10 p-8 bg-white rounded-lg shadow-md text-center">
+            <div className="max-w-md mx-auto  p-8 bg-white rounded-lg shadow-md text-center">
                 <h2 className="text-2xl font-bold text-green-600">Thank you!</h2>
                 <p className="text-gray-700 mt-2">Your feedback has been submitted successfully.</p>
             </div>
@@ -79,7 +79,28 @@ export default function PublicFormPage() {
                         required
                         />
                     );
-                    } else { // Default to 'TEXT'
+                    } else if (q.question_type === 'CHOICE') {
+                    inputComponent = (
+                        <div className="mt-2 space-y-2">
+                        {q.options && q.options.map((option, index) => (
+                            <div key={index} className="flex items-center">
+                            <input
+                                id={`${q.id}-${index}`}
+                                name={q.id} // All radio buttons for a question must have the same name
+                                type="radio"
+                                value={option}
+                                onChange={(e) => handleInputChange(String(q.id), e.target.value)}
+                                className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                required
+                            />
+                            <label htmlFor={`${q.id}-${index}`} className="ml-3 block text-sm font-medium text-gray-700">
+                                {option}
+                            </label>
+                            </div>
+                        ))}
+                        </div>
+                    );
+                    } else { 
                     inputComponent = (
                         <input
                         type="text"

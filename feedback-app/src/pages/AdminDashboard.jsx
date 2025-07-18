@@ -15,7 +15,6 @@ export default function AdminDashboard() {
       return;
     }
 
-    // Fetch the list of forms owned by this admin
     apiClient.get('/admin/my-forms/')
       .then(res => {
         setForms(res.data);
@@ -23,7 +22,6 @@ export default function AdminDashboard() {
       })
       .catch(err => {
         console.error("Failed to fetch forms:", err);
-        // Could be an expired token
         if (err.response && err.response.status === 401) {
              navigate('/admin/login');
         }
@@ -42,18 +40,26 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto my-10 p-8 bg-white rounded-lg shadow-xl">
-      <div className="flex justify-between items-center mb-6 border-b pb-4">
-        <h1 className="text-3xl font-bold">My Forms</h1>
-        <div>
-          <Link to="/admin/create" className="px-4 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 mr-2">
-            + New Form
-          </Link>
-          <button onClick={handleLogout} className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700">
-            Logout
-          </button>
+    <div className="max-w-4xl mx-auto p-10 bg-white rounded-lg shadow-xl">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 border-b pb-4">
+          <h1 className="text-2xl sm:text-3xl font-bold">My Forms</h1>
+
+          <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+            <Link 
+              to="/admin/create"
+              className="px-4 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition-colors text-center sm:w-auto w-full"
+            >
+              + New Form
+            </Link>
+            <button 
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition-colors sm:w-auto w-full"
+            >
+              Logout
+            </button>
+          </div>
         </div>
-      </div>
+
       
       <div className="space-y-4">
         {forms.length > 0 ? (

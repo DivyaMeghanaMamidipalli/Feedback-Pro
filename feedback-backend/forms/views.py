@@ -19,11 +19,12 @@ class FormCreateView(generics.CreateAPIView):
         form = serializer.save(owner=self.request.user)
         questions_data = self.request.data.get('questions', [])
         for q_data in questions_data:
-            Question.objects.create(
-                form=form, 
-                text=q_data.get('text'), 
-                question_type=q_data.get('question_type', 'TEXT') 
-            )
+            # Question.objects.create(
+            #     form=form, 
+            #     text=q_data.get('text'), 
+            #     question_type=q_data.get('question_type', 'TEXT') 
+            # )
+            Question.objects.create(form=form, **q_data)
 
 class PublicFormDetailView(generics.RetrieveAPIView):
     queryset = Form.objects.all()

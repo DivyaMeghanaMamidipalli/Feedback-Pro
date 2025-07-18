@@ -17,10 +17,12 @@ class Question(models.Model):
         ('TEXT', 'Single Line Text'),
         ('TEXTAREA', 'Multi-line Text'),
         ('NUMBER', 'Number'),
+        ('CHOICE', 'Multiple Choice'),
     ]
     form = models.ForeignKey(Form, related_name='questions', on_delete=models.CASCADE)
     text = models.CharField(max_length=1000)
     question_type = models.CharField(max_length=10, choices=QUESTION_TYPES, default='TEXT')
+    options = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return self.text

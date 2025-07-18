@@ -1,24 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect ,useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import apiClient from '../api/axiosConfig';
+import SummaryCharts from './SummaryCharts'; 
 
 export default function ResponseViewPage() {
   const { formId } = useParams();
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Fetch the specific form with its questions and responses
+   const fetchData = useCallback(() => {
     apiClient.get(`/admin/forms/${formId}/responses/`)
       .then(res => {
         setFormData(res.data);
-        setLoading(false);
       })
       .catch(err => {
         console.error("Failed to fetch form data:", err);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, [formId]);
+
+  useEffect(() => {
+    fetchData();
+    const intervalId = setInterval(fetchData, 5000);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [fetchData]);
 
   if (loading) {
     return <div className="text-center p-10">Loading Responses...</div>;
@@ -32,15 +41,17 @@ export default function ResponseViewPage() {
   const publicUrl = `${window.location.origin}/form/${formId}`;
 
   return (
-    <div className="max-w-6xl mx-auto my-10 p-8 bg-white rounded-lg shadow-xl">
+    <div className="max-w-6xl mx-auto  p-8 bg-white rounded-lg shadow-xl">
       <Link to="/admin/dashboard" className="text-blue-600 hover:underline mb-4 inline-block">← Back to Dashboard</Link>
       <h1 className="text-3xl font-bold">{title}</h1>
       <div className="my-4 p-3 bg-gray-100 rounded-md">
         <span className="font-semibold">Public Link: </span>
         <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{publicUrl}</a>
       </div>
+      <SummaryCharts questions={questions} responses={responses} />
 
-      <h2 className="text-2xl font-semibold mt-8 mb-4 border-t pt-4">Responses ({responses.length})</h2>
+      <h2 className="text-2xl font-semibold mt-8 mb-4 border-t pt-4">All Responses ({responses.length})</h2>
+
       
       {responses.length > 0 ? (
         <div className="overflow-x-auto border border-gray-200 rounded-lg">

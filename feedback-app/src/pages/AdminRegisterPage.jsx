@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Import Link
+import { useNavigate, Link } from 'react-router-dom'; 
 import axios from 'axios';
 
 export default function AdminRegisterPage() {
@@ -11,7 +11,7 @@ export default function AdminRegisterPage() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError('');
+    setError(''); 
 
     try {
       await axios.post('http://127.0.0.1:8000/api/register/', {

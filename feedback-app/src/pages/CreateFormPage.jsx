@@ -5,7 +5,7 @@ import apiClient from '../api/axiosConfig';
 export default function CreateFormPage() {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
-  const [questions, setQuestions] = useState([{ text: '', question_type: 'TEXT' }]);
+  const [questions, setQuestions] = useState([{ text: '', question_type: 'TEXT', options: [''] }]);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -20,12 +20,34 @@ export default function CreateFormPage() {
   const handleQuestionChange = (index, field, value) => {
     const newQuestions = [...questions];
     newQuestions[index][field] = value;
+    if (field === 'question_type') {
+      newQuestions[index].options = [''];
+    }
     setQuestions(newQuestions);
   };
 
   const addQuestion = () => {
     if (questions.length < 5) {
-      setQuestions([...questions, { text: '', question_type: 'TEXT' }]);
+      setQuestions([...questions, { text: '', question_type: 'TEXT', options: [''] }]);
+    }
+  };
+  const handleChoiceOptionChange = (qIndex, oIndex, value) => {
+    const newQuestions = [...questions];
+    newQuestions[qIndex].options[oIndex] = value;
+    setQuestions(newQuestions);
+  };
+
+  const addChoiceOption = (qIndex) => {
+    const newQuestions = [...questions];
+    newQuestions[qIndex].options.push('');
+    setQuestions(newQuestions);
+  };
+
+  const removeChoiceOption = (qIndex, oIndex) => {
+    const newQuestions = [...questions];
+    if (newQuestions[qIndex].options.length > 1) {
+      newQuestions[qIndex].options.splice(oIndex, 1);
+      setQuestions(newQuestions);
     }
   };
 
@@ -40,18 +62,15 @@ export default function CreateFormPage() {
     e.preventDefault();
     setError('');
     setSuccessMessage('');
-
-    const validQuestions = questions.filter(q => q.text.trim() !== '');
-
-    if (!title.trim() || validQuestions.length < 1) {
-      setError('Please provide a title and at least one valid question.');
-      return;
-    }
-
-    apiClient.post('/forms/create/', {
-      title: title,
-      questions: validQuestions,
-    })
+    const processedQuestions = questions.map(q => ({
+          ...q,
+          options: q.question_type === 'CHOICE' ? q.options.filter(opt => opt.trim() !== '') : null,
+        }));
+        
+        apiClient.post('/forms/create/', {
+          title: title,
+          questions: processedQuestions,
+        })
     .then(res => {
       const formId = res.data.id;
       const publicUrl = `${window.location.origin}/form/${formId}`;
@@ -66,10 +85,9 @@ export default function CreateFormPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto my-10 p-4 sm:p-8 bg-white rounded-lg shadow-xl">
+    <div className="max-w-2xl mx-auto  p-4 sm:p-8 bg-white rounded-lg shadow-xl">
       <h1 className="text-3xl font-bold text-gray-800 mb-6 border-b pb-4">Create a New Form</h1>
       
-      {/* The success message logic was correct */}
       {successMessage ? (
         <div className="p-4 mb-4 text-green-800 bg-green-100 border border-green-200 rounded-md">
           <p className="font-bold">Success!</p>
@@ -87,9 +105,6 @@ export default function CreateFormPage() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* ========================================================== */}
-          {/* THIS WAS THE FIRST MISSING PART: THE FORM TITLE INPUT      */}
-          {/* ========================================================== */}
           <div>
             <label className="block text-lg font-medium text-gray-700 mb-2">Form Title</label>
             <input
@@ -105,7 +120,8 @@ export default function CreateFormPage() {
           <div>
             <label className="block text-lg font-medium text-gray-700 mb-2">Questions</label>
             {questions.map((question, index) => (
-              <div key={index} className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 mb-2">
+              <div key={index} className="p-4 border rounded-md mb-4 bg-gray-5">
+                <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 mb-2">
                 <input
                   type="text"
                   value={question.text}
@@ -121,6 +137,7 @@ export default function CreateFormPage() {
                   <option value="TEXT">Single Line</option>
                   <option value="TEXTAREA">Multi-line</option>
                   <option value="NUMBER">Number</option>
+                  <option value="CHOICE">Multiple Choice</option>
                 </select>
                 <button
                   type="button"
@@ -131,10 +148,28 @@ export default function CreateFormPage() {
                   Remove
                 </button>
               </div>
+              {question.question_type === 'CHOICE' && (
+                <div className="pl-4 mt-4 border-l-4">
+                  <label className="text-sm font-medium text-gray-600">Choices</label>
+                  {question.options.map((option, oIndex) => (
+                    <div key={oIndex} className="flex items-center space-x-2 mt-2">
+                      <input
+                        type="text"
+                        value={option}
+                        onChange={(e) => handleChoiceOptionChange(index, oIndex, e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                        placeholder={`Option ${oIndex + 1}`}
+                      />
+                      <button type="button" onClick={() => removeChoiceOption(index, oIndex)} disabled={question.options.length <= 1} className="p-2 bg-gray-200 rounded-md disabled:opacity-50">-</button>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => addChoiceOption(index)} className="mt-2 text-sm text-blue-600 hover:underline">+ Add another option</button>
+                </div>
+              )}
+            </div>
+              
             ))}
-            {/* ========================================================== */}
-            {/* THIS WAS THE SECOND MISSING PART: THE ADD QUESTION BUTTON  */}
-            {/* ========================================================== */}
+            
             <button
               type="button"
               onClick={addQuestion}
