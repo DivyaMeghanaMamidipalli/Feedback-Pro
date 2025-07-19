@@ -2,7 +2,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
 const apiClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api', 
+  baseURL: import.meta.env.VITE_API_BASE_URL, 
 });
 
 apiClient.interceptors.request.use(
@@ -16,7 +16,7 @@ apiClient.interceptors.request.use(
       if (isExpired) {
         try {
           const refreshToken = localStorage.getItem('refreshToken');
-          const response = await axios.post('http://127.0.0.1:8000/api/token/refresh/', {
+          const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/token/refresh/`, {
             refresh: refreshToken,
           });
           
