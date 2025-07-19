@@ -12,12 +12,12 @@ class FormSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Form
-        fields = ['id', 'title', 'questions']
+        fields = ['id', 'title', 'questions', 'created_at']
 
 class ResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Response
-        fields = ['id', 'form', 'answers']
+        fields = ['id', 'form', 'answers', 'submitted_at']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

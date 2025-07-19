@@ -2,6 +2,7 @@ import React, { useState, useEffect ,useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import apiClient from '../api/axiosConfig';
 import SummaryCharts from './SummaryCharts'; 
+import Papa from 'papaparse'; 
 
 export default function ResponseViewPage() {
   const { formId } = useParams();
@@ -29,6 +30,42 @@ export default function ResponseViewPage() {
     };
   }, [fetchData]);
 
+  const handleExportCSV = () => {
+    if (!formData) return;
+
+    const { questions, responses } = formData;
+    
+    const headers = ['Submitted At', ...questions.map(q => q.text)];
+    
+    const dataRows = responses.map(resp => {
+      const row = {
+        'Submitted At': new Date(resp.submitted_at).toLocaleString(),
+      };
+      questions.forEach(q => {
+        row[q.text] = resp.answers[q.id] || '';
+      });
+      return row;
+    });
+
+    const csv = Papa.unparse({
+      fields: headers,
+      data: dataRows,
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      const safeTitle = formData.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      link.setAttribute('download', `${safeTitle}_responses.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   if (loading) {
     return <div className="text-center p-10">Loading Responses...</div>;
   }
@@ -42,7 +79,18 @@ export default function ResponseViewPage() {
 
   return (
     <div className="max-w-6xl mx-auto  p-8 bg-white rounded-lg shadow-xl">
-      <Link to="/admin/dashboard" className="text-blue-600 hover:underline mb-4 inline-block">← Back to Dashboard</Link>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4">
+        <Link to="/admin/dashboard" className="text-blue-600 hover:underline mb-2 sm:mb-0">← Back to Dashboard</Link>
+        
+        {responses.length > 0 && (
+          <button
+            onClick={handleExportCSV}
+            className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-700 transition"
+          >
+            Export to CSV
+          </button>
+        )}
+      </div>
       <h1 className="text-3xl font-bold">{title}</h1>
       <div className="my-4 p-3 bg-gray-100 rounded-md">
         <span className="font-semibold">Public Link: </span>
