@@ -12,7 +12,7 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setError('');
 
-    axios.post('http://127.0.0.1:8000/api/token/', {
+    axios.post(`${import.meta.env.VITE_API_BASE_URL}/token/`, {
       username,
       password,
     })

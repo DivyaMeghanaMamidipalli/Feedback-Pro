@@ -11,7 +11,7 @@ export default function PublicFormPage() {
 
     useEffect(() => {
         // Fetch form details from your Django API
-        axios.get(`http://127.0.0.1:8000/api/forms/${formId}/`)
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/forms/${formId}/`)
             .then(res => {
                 setForm(res.data);
                 setLoading(false);
@@ -28,7 +28,7 @@ export default function PublicFormPage() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post(`http://127.0.0.1:8000/api/submit/`, {
+        axios.post(`${import.meta.env.VITE_API_BASE_URL}/submit/`, {
             form: formId,
             answers: answers
         })

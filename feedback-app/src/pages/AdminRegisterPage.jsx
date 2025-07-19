@@ -14,13 +14,13 @@ export default function AdminRegisterPage() {
     setError(''); 
 
     try {
-      await axios.post('http://127.0.0.1:8000/api/register/', {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/register/`, {
         username,
         email,
         password,
       });
 
-      const response = await axios.post('http://127.0.0.1:8000/api/token/', {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/token/`, {
         username,
         password,
       });
