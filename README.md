@@ -2,7 +2,7 @@
 
 A robust, full-stack web application designed for businesses to create custom feedback forms and analyze customer responses in a dedicated, secure dashboard. This project demonstrates a complete product lifecycle, from architectural design and backend API development to a responsive, dynamic frontend user interface.
 
-**[Live Demo Link - Frontend](https://feedback-pro-theta.vercel.app/)** • **[Live Demo Link - API](https://myfeedback-pro-api.onrender.com)**
+**[Live Demo Link - Frontend](https://feedback-pro-theta.vercel.app/)** • **[Live Demo Link - API](https://myfeedback-pro-api.onrender.com/admin/)**
 
 ---
 
