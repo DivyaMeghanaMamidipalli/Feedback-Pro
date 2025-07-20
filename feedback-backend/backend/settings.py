@@ -26,10 +26,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
-BACKEND_HOSTNAME = os.getenv('BACKEND_HOSTNAME')
-if BACKEND_HOSTNAME:
-    ALLOWED_HOSTS.append(BACKEND_HOSTNAME)
+
 
 
 # Application definition
@@ -138,9 +135,25 @@ if ALLOWED_FRONTEND_URL:
     from urllib.parse import urlparse
     ALLOWED_HOSTS.append(urlparse(ALLOWED_FRONTEND_URL).hostname)
 
+APPEND_SLASH = True
 
 
 CORS_ALLOW_ALL_ORIGINS = False
+
+
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    # 1. Regex for your main Vercel production URL
+    r"^https:\/\/feedback-pro-theta\.vercel\.app$",
+
+    # 2. Regex for Vercel's preview URLs
+    r"^https:\/\/feedback-k92frbbik-.*\.vercel\.app$",
+]
+
+ALLOWED_HOSTS = []
+BACKEND_HOSTNAME = os.getenv('BACKEND_HOSTNAME')
+if BACKEND_HOSTNAME:
+    ALLOWED_HOSTS.append(BACKEND_HOSTNAME)
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
