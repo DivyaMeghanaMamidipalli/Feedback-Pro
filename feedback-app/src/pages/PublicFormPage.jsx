@@ -10,7 +10,6 @@ export default function PublicFormPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Fetch form details from your Django API
         axios.get(`${import.meta.env.VITE_API_BASE_URL}/forms/${formId}/`)
             .then(res => {
                 setForm(res.data);
@@ -60,7 +59,6 @@ export default function PublicFormPage() {
             <h1 className="text-3xl font-bold text-gray-800 mb-6 border-b pb-4">{form.title}</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 {form.questions.map(q => {
-                    // Determine which input component to render
                     let inputComponent;
                     if (q.question_type === 'TEXTAREA') {
                     inputComponent = (
@@ -86,7 +84,7 @@ export default function PublicFormPage() {
                             <div key={index} className="flex items-center">
                             <input
                                 id={`${q.id}-${index}`}
-                                name={q.id} // All radio buttons for a question must have the same name
+                                name={q.id} 
                                 type="radio"
                                 value={option}
                                 onChange={(e) => handleInputChange(String(q.id), e.target.value)}

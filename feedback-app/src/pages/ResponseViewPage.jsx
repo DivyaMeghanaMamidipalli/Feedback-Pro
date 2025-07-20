@@ -107,18 +107,15 @@ export default function ResponseViewPage() {
             <thead className="bg-gray-200">
               <tr>
                 <th className="py-2 px-4 border text-left text-sm font-semibold text-gray-700">Submitted At</th>
-                {/* Dynamically create a header for each question */}
                 {questions.map(q => (
                   <th key={q.id} className="py-2 px-4 border text-left text-sm font-semibold text-gray-700">{q.text}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {/* Map over each response to create a table row */}
               {responses.map(resp => (
                 <tr key={resp.id} className="hover:bg-gray-50">
                   <td className="py-2 px-4 border text-sm text-gray-600">{new Date(resp.submitted_at).toLocaleString()}</td>
-                  {/* For each question, find the matching answer in the response's 'answers' object */}
                   {questions.map(q => (
                     <td key={q.id} className="py-2 px-4 border text-sm text-gray-800">
                       {resp.answers[q.id] || ''}

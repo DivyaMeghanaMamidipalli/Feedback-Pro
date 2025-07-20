@@ -62,7 +62,6 @@ export default function AdminRegisterPage() {
           <button type="submit" className="w-full p-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700">Register</button>
         </form>
 
-        {/* NEW LINK TO LOGIN PAGE */}
         <p className="text-sm text-center text-gray-600">
           Already have an account?{' '}
           <Link to="/admin/login" className="font-medium text-blue-600 hover:underline">

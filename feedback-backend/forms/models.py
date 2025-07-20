@@ -11,7 +11,6 @@ class Form(models.Model):
     def __str__(self):
         return self.title
 
-# This model stores each question within a form.
 class Question(models.Model):
     QUESTION_TYPES = [
         ('TEXT', 'Single Line Text'),

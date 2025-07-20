@@ -14,16 +14,10 @@ from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv()
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 
@@ -137,10 +131,7 @@ CORS_ALLOW_ALL_ORIGINS = False
 
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    # 1. Regex for your main Vercel production URL
     r"^https:\/\/feedback-pro-theta\.vercel\.app$",
-
-    # 2. Regex for Vercel's preview URLs
     r"^https:\/\/feedback-k92frbbik-.*\.vercel\.app$",
 ]
 

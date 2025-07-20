@@ -9,7 +9,6 @@ export default function CreateFormPage() {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  // This part was correct
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
